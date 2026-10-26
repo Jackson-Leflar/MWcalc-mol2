@@ -19,16 +19,27 @@ def ReadMolecules(filename):
             #for element in re.search(r"([A-Z][a-z]?)", mol2File):
             #    print(element.group())
             #    molecules.append((element.group()))
-
             line_split = line.split()
             if len(line_split) >= 6:
-                print(line_split[5])
+                molecules.append((line_split[5]))
     return molecules
+
+def molecular_weight(filename):
+    total = 0.0
+    for element in ReadMolecules(filename):
+        if element not in ATOMIC_WEIGHTS:
+            raise ValueError(f"Unknown Element {element}")
+        total += ATOMIC_WEIGHTS[element]
+    return total
+
+# Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
+
+
 
 def main():
     print(ReadMolecules(sys.argv[1]))
+    print(molecular_weight(sys.argv[1]))
 
 
 if __name__ == "__main__":
     main()
-# Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
