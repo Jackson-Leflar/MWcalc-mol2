@@ -21,7 +21,10 @@ def ReadMolecules(filename):
             #    molecules.append((element.group()))
             line_split = line.split()
             if len(line_split) >= 6:
+                if line_split[5] == "****":
+                    break
                 molecules.append((line_split[5]))
+                
     return molecules
 
 def molecular_weight(filename):
@@ -33,7 +36,7 @@ def molecular_weight(filename):
     return total
 
 # Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
-
+#def split_molecules():
 
 
 def main():
