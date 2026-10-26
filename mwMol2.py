@@ -31,8 +31,11 @@ def molecular_weight(filename):
     total = 0.0
     for element in ReadMolecules(filename):
         if element not in ATOMIC_WEIGHTS:
+            first_char = element[0]
+            total += ATOMIC_WEIGHTS[first_char]
+        elif first_char not in ATOMIC_WEIGHTS:
             raise ValueError(f"Unknown Element {element}")
-        total += ATOMIC_WEIGHTS[element]
+    total += ATOMIC_WEIGHTS[element]
     return total
 
 # Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
