@@ -24,19 +24,18 @@ def ReadMolecules(filename):
                 if line_split[5] == "****":
                     break
                 molecules.append((line_split[5]))
-                
+    
     return molecules
 
 def molecular_weight(filename):
     total = 0.0
     for element in ReadMolecules(filename):
-        if element not in ATOMIC_WEIGHTS:
-            first_char = element[0]
-            total += ATOMIC_WEIGHTS[first_char]
-        elif first_char not in ATOMIC_WEIGHTS:
-            raise ValueError(f"Unknown Element {element}")
-        else:
+        if element in ATOMIC_WEIGHTS:
             total += ATOMIC_WEIGHTS[element]
+        elif element not in ATOMIC_WEIGHTS:
+            total += ATOMIC_WEIGHTS[element[0]]
+        else: 
+            raise ValueError(f"Unknown Element {element}")
     return total
 
 # Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
@@ -44,7 +43,7 @@ def molecular_weight(filename):
 
 
 def main():
-    ReadMolecules(sys.argv[1])
+    print(ReadMolecules(sys.argv[1]))
     print(molecular_weight(sys.argv[1]))
 
 
