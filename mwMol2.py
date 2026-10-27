@@ -35,15 +35,16 @@ def molecular_weight(filename):
             total += ATOMIC_WEIGHTS[first_char]
         elif first_char not in ATOMIC_WEIGHTS:
             raise ValueError(f"Unknown Element {element}")
-    total += ATOMIC_WEIGHTS[element]
+        else:
+            total += ATOMIC_WEIGHTS[element]
     return total
 
 # Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
-#def split_molecules():
+# def splitmolecules
 
 
 def main():
-    print(ReadMolecules(sys.argv[1]))
+    ReadMolecules(sys.argv[1])
     print(molecular_weight(sys.argv[1]))
 
 
