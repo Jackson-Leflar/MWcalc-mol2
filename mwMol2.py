@@ -11,40 +11,49 @@ import sys
 # Step 1: create dictionary of atomic weights
 ATOMIC_WEIGHTS = {"H": 1.008, "C": 12.011, "N": 14.007, "O": 15.999, "F": 18.998 , "Na": 22.990,\
                    "P": 30.974, "S": 32.066, "Cl": 35.453, "Br": 79.904, "Ca": 40.078}
-# Step 2: read in mol2 file and look for every element
-def ReadMolecules(filename):
-    molecules = []
-    with open(filename, 'r') as mol2File:
-        for line in mol2File:
-            #for element in re.search(r"([A-Z][a-z]?)", mol2File):
-            #    print(element.group())
-            #    molecules.append((element.group()))
-            line_split = line.split()
-            if len(line_split) >= 6:
-                if line_split[5] == "****":
-                    break
-                molecules.append((line_split[5]))
-    
-    return molecules
-
-def molecular_weight(filename):
-    total = 0.0
-    for element in ReadMolecules(filename):
-        if element in ATOMIC_WEIGHTS:
-            total += ATOMIC_WEIGHTS[element]
-        elif element not in ATOMIC_WEIGHTS:
-            total += ATOMIC_WEIGHTS[element[0]]
-        else: 
-            raise ValueError(f"Unknown Element {element}")
-    return total
-
-# Step 3: start reading each molecule at "@<TRIPOS>ATOM" and end at "0 ROOT"
-# def splitmolecules
-
-
 def main():
-    print(ReadMolecules(sys.argv[1]))
-    print(molecular_weight(sys.argv[1]))
+    filename = sys.argv[1]
+    with open(filename, 'r') as mol2File:
+        in_molecule = False
+        mols = []
+        mol_lines = []
+        mol_file_lines = mol2File.readlines()
+        for line in mol_file_lines:
+            if "@<TRIPOS>MOLECULE" in line:
+                in_molecule = True                    
+                continue
+            if "ROOT" in line:
+                in_molecule = False
+                mol_lines.append(line)
+                mols.append(mol_lines)                    
+                mol_lines = []
+                continue
+    
+            if in_molecule == True:
+                mol_lines.append(line)
+
+        in_atoms = False
+        atoms = [] 
+        mw_counter = 0
+        for mol in mols:
+            for line in mol:
+                if "@<TRIPOS>ATOM" in line:
+                    in_atoms = True
+                    continue
+                if "@<TRIPOS>BOND" in line:
+                    in_atoms = False
+                    for atom in atoms:
+                        mw_counter += ATOMIC_WEIGHTS[atom]
+                    
+                if in_atoms == True:
+                    line_split = line.split()
+                    element = line_split[5].split(".")[0]
+                    atoms.append(element)            
+    
+            print(f"{mw_counter:.3f}")
+            mw_counter = 0
+            atoms = []
+            continue
 
 
 if __name__ == "__main__":
